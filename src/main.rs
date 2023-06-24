@@ -7,47 +7,68 @@ use ansi_term::Colour::*;
 use ansi_term::Style;
 
 fn main() {
+    let mut game: Game = Game::new();
+
+    print_title();
+
+    while !game.complete {
+        before_round(&game);
+        game.complete = game.play_round();
+        after_round(&game);
+    }
+
+    display_winner(&game);
+}
+
+fn print_blank_line() {
+    println!("{}", format!(""));
+}
+
+fn print_title() {
     print_blank_line();
     println!("{}", Style::new().blink().bold().paint("ATTACK DICE GAME"));
     print_blank_line();
+}
 
-    let mut game: Game = Game::new();
+fn before_round(game: &Game) {
+    println!(
+        "{} {}",
+        Style::new().bold().paint("Round"),
+        Style::new().bold().paint(game.round.to_string())
+    );
+    println!(
+        "{} {}",
+        Red.paint("Player One HP"),
+        Red.paint(game.player_one.hp.to_string())
+    );
+    println!(
+        "{} {}",
+        Green.paint("Player Two HP"),
+        Green.paint(game.player_two.hp.to_string())
+    );
+    print_blank_line();
+}
 
-    while !game.complete {
-        println!(
-            "{} {}",
-            Style::new().bold().paint("Round"),
-            Style::new().bold().paint(game.round.to_string())
-        );
-        println!(
-            "{} {}",
-            Red.paint("Player One HP"),
-            Red.paint(game.player_one.hp.to_string())
-        );
-        println!(
-            "{} {}",
-            Green.paint("Player Two HP"),
-            Green.paint(game.player_two.hp.to_string())
-        );
-        print_blank_line();
-        game.complete = game.play_round();
-        print_blank_line();
-        println!("{}", Style::new().bold().paint("HP after round"));
-        println!(
-            "{} {}",
-            Red.paint("Player One HP"),
-            Red.paint(game.player_one.hp.to_string())
-        );
-        println!(
-            "{} {}",
-            Green.paint("Player Two HP"),
-            Green.paint(game.player_two.hp.to_string())
-        );
+fn after_round(game: &Game) {
+    print_blank_line();
+    println!("{}", Style::new().bold().paint("HP after round"));
+    println!(
+        "{} {}",
+        Red.paint("Player One HP"),
+        Red.paint(game.player_one.hp.to_string())
+    );
+    println!(
+        "{} {}",
+        Green.paint("Player Two HP"),
+        Green.paint(game.player_two.hp.to_string())
+    );
 
-        print_blank_line();
-        println!("---------------");
-        print_blank_line();
-    }
+    print_blank_line();
+    println!("---------------");
+    print_blank_line();
+}
+
+fn display_winner(game: &Game) {
     if game.player_one.hp <= 0 && game.player_two.hp > 0 {
         println!("{}", Green.bold().paint("Player Two Wins"));
     } else if game.player_two.hp <= 0 && game.player_one.hp > 0 {
@@ -64,8 +85,4 @@ fn main() {
         );
     }
     print_blank_line();
-}
-
-fn print_blank_line() {
-    println!("{}", format!(""));
 }

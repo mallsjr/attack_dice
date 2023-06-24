@@ -42,6 +42,10 @@ impl Game {
         self.calculate_damage(player1_action, player2_action);
         self.round += 1;
         //determine if game completed if not update round number
+        self.is_game_complete()
+    }
+
+    fn is_game_complete(&self) -> bool {
         self.player_one.hp <= 0 || self.player_two.hp <= 0
     }
 
@@ -153,10 +157,10 @@ impl Game {
 
     fn determine_player_action(
         &self,
-        player_roll: PlayerRolls,
+        player_rolls: PlayerRolls,
         rollover: &RollOver,
     ) -> PlayerAction {
-        let (mut physical, mut magical, action) = player_roll;
+        let (mut physical, mut magical, action) = player_rolls;
 
         let player_action = match action % 2 {
             0 => Action::Attack,
