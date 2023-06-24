@@ -1,5 +1,3 @@
-use rand::Rng;
-
 use crate::actions::{Action, ActionType};
 pub struct Player {
     pub hp: isize,
@@ -12,12 +10,6 @@ impl Player {
             hp: 30,
             roll_over: RollOver::default(),
         }
-    }
-
-    pub fn roll_dice(&self) -> isize {
-        let mut rng = rand::thread_rng();
-        let random_number: isize = rng.gen_range(1..=6);
-        random_number
     }
 }
 

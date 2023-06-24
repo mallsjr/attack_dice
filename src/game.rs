@@ -1,5 +1,6 @@
 use ansi_term::Colour::*;
 use ansi_term::Style;
+use rand::Rng;
 
 use crate::actions::ActionType;
 use crate::player::RollOver;
@@ -29,27 +30,23 @@ impl Game {
     pub fn play_round(&mut self) -> bool {
         //player_one rolls
         println!("{}", Style::new().bold().paint("Player One Roll"));
-        let player_one_roll: PlayerRolls = (
-            self.player_one.roll_dice(),
-            self.player_one.roll_dice(),
-            self.player_one.roll_dice(),
-        );
+        let player_one_rolls = self.roll_dice();
         let player1_action =
-            self.determine_player_action(player_one_roll, &self.player_one.roll_over);
+            self.determine_player_action(player_one_rolls, &self.player_one.roll_over);
         //player_two rolls
         println!("{}", Style::new().bold().paint("Player Two Roll"));
-        let player_two_roll: PlayerRolls = (
-            self.player_two.roll_dice(),
-            self.player_two.roll_dice(),
-            self.player_two.roll_dice(),
-        );
+        let player_two_rolls = self.roll_dice();
         let player2_action =
-            self.determine_player_action(player_two_roll, &self.player_two.roll_over);
+            self.determine_player_action(player_two_rolls, &self.player_two.roll_over);
         //calculate damage
         self.calculate_damage(player1_action, player2_action);
         self.round += 1;
         //determine if game completed if not update round number
         self.player_one.hp <= 0 || self.player_two.hp <= 0
+    }
+
+    fn roll_dice(&self) -> PlayerRolls {
+        (roll(), roll(), roll())
     }
 
     fn calculate_damage(&mut self, player1_action: PlayerAction, player2_action: PlayerAction) {
@@ -208,4 +205,10 @@ impl Game {
         self.player_one.roll_over = RollOver::default();
         self.player_two.roll_over = RollOver::default();
     }
+}
+
+fn roll() -> isize {
+    let mut rng = rand::thread_rng();
+    let random_number: isize = rng.gen_range(1..=6);
+    random_number
 }
