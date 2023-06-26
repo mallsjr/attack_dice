@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use ansi_term::Colour::*;
 use ansi_term::Style;
 use rand::Rng;
@@ -167,6 +169,57 @@ impl Game {
             _ => Action::Defend,
         };
 
+        let (player_action_type, player_damage) = match magical > physical {
+            true => {
+                if check_for_triples(vec![physical, magical, action]) {
+                    println!("Rolled triple! Do something here later: {:?}", player_rolls);
+                    //"Got triples player actions is special"
+                    // return PlayerAction {
+                    //     action: player_action,
+                    //     action_type: ActionType::Magical,
+                    //     damage: player_damage,
+                    //     magical,
+                    //     physical,
+                    // };
+                } else {
+                    magical = match check_for_doubles(vec![physical, magical, action]) {
+                        true => {
+                            println!("Rolled doubles! Doubling magical value: {:?}", player_rolls);
+                            magical * 2
+                        }
+                        false => magical,
+                    };
+                }
+                (ActionType::Magical, magical)
+            }
+            false => {
+                if check_for_triples(vec![physical, magical, action]) {
+                    println!("Rolled triple! Do something here later: {:?}", player_rolls);
+                    //"Got triples player actions is special"
+                    // return PlayerAction {
+                    //     action: player_action,
+                    //     action_type: ActionType::Physical,
+                    //     damage: player_damage,
+                    //     magical,
+                    //     physical,
+                    // };
+                } else {
+                    physical = match check_for_doubles(vec![physical, magical, action]) {
+                        true => {
+                            println!(
+                                "Rolled doubles! Doubling physical value: {:?}",
+                                player_rolls
+                            );
+                            physical * 2
+                        }
+                        false => physical,
+                    };
+                }
+
+                (ActionType::Physical, physical)
+            }
+        };
+
         println!(
             "{} Physical + {} rollover = {} ",
             physical,
@@ -182,11 +235,6 @@ impl Game {
 
         physical += rollover.physical;
         magical += rollover.magical;
-
-        let (player_action_type, player_damage) = match magical > physical {
-            true => (ActionType::Magical, magical),
-            false => (ActionType::Physical, physical),
-        };
 
         println!(
             "{}: {} {}",
@@ -215,4 +263,26 @@ fn roll() -> isize {
     let mut rng = rand::thread_rng();
     let random_number: isize = rng.gen_range(1..=6);
     random_number
+}
+
+fn check_for_triples(values: Vec<isize>) -> bool {
+    let mut count_map = HashMap::new();
+
+    for item in values {
+        let count = count_map.entry(item).or_insert(0);
+        *count += 1;
+    }
+
+    count_map.values().any(|&count| count == 3)
+}
+
+fn check_for_doubles(values: Vec<isize>) -> bool {
+    let mut count_map = HashMap::new();
+
+    for item in values {
+        let count = count_map.entry(item).or_insert(0);
+        *count += 1;
+    }
+
+    count_map.values().any(|&count| count == 2)
 }
