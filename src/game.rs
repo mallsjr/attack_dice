@@ -12,6 +12,26 @@ use crate::{
     player::{Player, PlayerAction, PlayerRolls},
 };
 
+/**
+ * How this works:
+Challenge someone via tagging / @-ing. The dice roll command will not work if you tag someone in the same post. If there's enough players perhaps a tournament / king of the hill mode is possible.
+The players both have 30HP at the start of the duel and will end once one player's HP reaches zero. The challenger rolls first and keeps tally of the game. These are negotiable.
+To determine your action, roll a 6-sided dice thrice or input [!roll 1,6,3] without the brackets [ ] to determine your action. The opponent follows suit.
+Roll result: Physical, Magical, Action
+Physical determines your physical attack / defense
+Magical determines your magical attack / defense.
+Action will determine what you do for the turn, odd numbers(1,3,5) will allow you to perform an attack while even numbers(2,4,6) will have you on the defensive.
+An attack is done if the Action roll is an odd number(1,3,5). Attacking inflicts damage to your opponent and is classified as Physical or Magical.
+The higher value between Physical and Magical will determine what type of attack is performed and the attack value. (Ex: [Roll result: 3, 4, 1] Magical attack is higher so a Magical attack of 4 is performed.)
+Critical Attack: If the roll gives 2 of the same number, attack value is doubled(highest value) and tripled if every number's the same. Cannot be blocked normally. This only applies on the latest roll after reroll additions.
+Defending is done if the Action roll is an even number(2,4,6). Defending blocks the corresponding classification of attack.
+Physical defense only blocks Physical attacks while Magical defense only blocks Magical attacks.
+If an attack exceeds the defensive value, the difference is dealt as damage.
+Stalwart Defense: If the roll gives 2 of the same number, defensive values are doubled and tripled if every number's the same. If the defense is higher than the attack, the difference is added to the HP as recovery. Stalwart Defense can block critical attack. This only applies on the latest roll after reroll additions.
+If both players get odd Action rolls, both players will perform an attack and take damage.
+If both players get even Action rolls, both players will roll again but the Physical values and Magical values will be added to the next roll respectively.
+*/
+
 pub struct Game {
     pub complete: bool,
     pub player_one: Player,
