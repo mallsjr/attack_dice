@@ -24,6 +24,8 @@ pub type PlayerRolls = (isize, isize, isize);
 pub struct PlayerAction {
     pub action: Action,
     pub action_type: ActionType,
+    pub critical_attack: bool,
+    pub stalwart_defend: bool,
     pub damage: isize,
     pub magical: isize,
     pub physical: isize,

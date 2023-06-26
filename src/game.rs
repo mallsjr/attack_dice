@@ -162,6 +162,9 @@ impl Game {
         player_rolls: PlayerRolls,
         rollover: &RollOver,
     ) -> PlayerAction {
+        let mut critical_attack = false;
+        let mut stalwart_defend = false;
+
         let (mut physical, mut magical, action) = player_rolls;
 
         let player_action = match action % 2 {
@@ -173,14 +176,11 @@ impl Game {
             true => {
                 if check_for_triples(vec![physical, magical, action]) {
                     println!("Rolled triple! Do something here later: {:?}", player_rolls);
-                    //"Got triples player actions is special"
-                    // return PlayerAction {
-                    //     action: player_action,
-                    //     action_type: ActionType::Magical,
-                    //     damage: player_damage,
-                    //     magical,
-                    //     physical,
-                    // };
+                    if player_action == Action::Attack {
+                        critical_attack = true
+                    } else {
+                        stalwart_defend = true;
+                    }
                 } else {
                     magical = match check_for_doubles(vec![physical, magical, action]) {
                         true => {
@@ -195,14 +195,11 @@ impl Game {
             false => {
                 if check_for_triples(vec![physical, magical, action]) {
                     println!("Rolled triple! Do something here later: {:?}", player_rolls);
-                    //"Got triples player actions is special"
-                    // return PlayerAction {
-                    //     action: player_action,
-                    //     action_type: ActionType::Physical,
-                    //     damage: player_damage,
-                    //     magical,
-                    //     physical,
-                    // };
+                    if player_action == Action::Attack {
+                        critical_attack = true
+                    } else {
+                        stalwart_defend = true;
+                    }
                 } else {
                     physical = match check_for_doubles(vec![physical, magical, action]) {
                         true => {
@@ -247,6 +244,8 @@ impl Game {
         PlayerAction {
             action: player_action,
             action_type: player_action_type,
+            critical_attack,
+            stalwart_defend,
             damage: player_damage,
             magical,
             physical,
