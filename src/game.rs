@@ -92,65 +92,97 @@ impl Game {
             //"one player is attacking and the other is defending"
             if player1_action.action == Action::Defend {
                 // "Player one is defending so will lose HP if player two attack is different or higher"
-                if player1_action.action_type == ActionType::Magical
-                    && player2_action.action_type == ActionType::Magical
-                    || player1_action.action_type == ActionType::Physical
-                        && player2_action.action_type == ActionType::Physical
-                {
+                if player1_action.stalwart_defend && player2_action.critical_attack {
                     if player2_action.damage > player1_action.damage {
-                        //Player 2 rolled higher than player 1 so calculate damage
-                        let damage = player2_action.damage - player1_action.damage;
-                        self.player_one.hp -= damage;
+                        self.player_one.hp -= player2_action.damage - player1_action.damage;
+                    } else {
+                        self.player_one.hp += player1_action.damage - player2_action.damage;
+                    }
+                } else if player1_action.stalwart_defend && !player2_action.critical_attack {
+                    if player1_action.damage > player2_action.damage {
+                        self.player_one.hp += player1_action.damage - player2_action.damage;
+                    } else {
+                        self.player_one.hp -= player2_action.damage - player1_action.damage;
+                    }
+                } else if !player1_action.stalwart_defend && player2_action.critical_attack {
+                    self.player_one.hp -= player2_action.damage;
+                } else if !player1_action.stalwart_defend && !player2_action.critical_attack {
+                    if player1_action.action_type == ActionType::Magical
+                        && player2_action.action_type == ActionType::Magical
+                        || player1_action.action_type == ActionType::Physical
+                            && player2_action.action_type == ActionType::Physical
+                    {
+                        if player2_action.damage > player1_action.damage {
+                            //Player 2 rolled higher than player 1 so calculate damage
+                            let damage = player2_action.damage - player1_action.damage;
+                            self.player_one.hp -= damage;
+                            println!(
+                                "{} {} {} {}",
+                                Green.paint("Player Two deals"),
+                                Green.paint(damage.to_string()),
+                                Green.paint(player2_action.action_type.to_string()),
+                                Green.paint("damage")
+                            );
+                        } else {
+                            println!("Player One has a higher defend");
+                        }
+                    } else {
+                        self.player_one.hp -= player2_action.damage;
                         println!(
                             "{} {} {} {}",
                             Green.paint("Player Two deals"),
-                            Green.paint(damage.to_string()),
+                            Green.paint(player2_action.damage.to_string()),
                             Green.paint(player2_action.action_type.to_string()),
                             Green.paint("damage")
                         );
-                    } else {
-                        println!("Player One has a higher defend");
                     }
-                } else {
-                    self.player_one.hp -= player2_action.damage;
-                    println!(
-                        "{} {} {} {}",
-                        Green.paint("Player Two deals"),
-                        Green.paint(player2_action.damage.to_string()),
-                        Green.paint(player2_action.action_type.to_string()),
-                        Green.paint("damage")
-                    );
                 }
             } else {
                 //"Player two is defending so will lose HP if player one attack is different or higher"
-                if player1_action.action_type == ActionType::Magical
-                    && player2_action.action_type == ActionType::Magical
-                    || player1_action.action_type == ActionType::Physical
-                        && player2_action.action_type == ActionType::Physical
-                {
+                if player2_action.stalwart_defend && player1_action.critical_attack {
                     if player1_action.damage > player2_action.damage {
-                        //Player 2 rolled higher than player 1 so calculate damage
-                        let damage = player1_action.damage - player2_action.damage;
-                        self.player_two.hp -= damage;
+                        self.player_two.hp -= player1_action.damage - player2_action.damage;
+                    } else {
+                        self.player_two.hp += player2_action.damage - player1_action.damage;
+                    }
+                } else if player2_action.stalwart_defend && !player1_action.critical_attack {
+                    if player2_action.damage > player1_action.damage {
+                        self.player_two.hp += player2_action.damage - player1_action.damage;
+                    } else {
+                        self.player_two.hp -= player1_action.damage - player2_action.damage;
+                    }
+                } else if !player2_action.stalwart_defend && player1_action.critical_attack {
+                    self.player_two.hp -= player1_action.damage;
+                } else if !player2_action.stalwart_defend && !player1_action.critical_attack {
+                    if player1_action.action_type == ActionType::Magical
+                        && player2_action.action_type == ActionType::Magical
+                        || player1_action.action_type == ActionType::Physical
+                            && player2_action.action_type == ActionType::Physical
+                    {
+                        if player1_action.damage > player2_action.damage {
+                            //Player 2 rolled higher than player 1 so calculate damage
+                            let damage = player1_action.damage - player2_action.damage;
+                            self.player_two.hp -= damage;
+                            println!(
+                                "{} {} {} {}",
+                                Red.paint("Player One deals"),
+                                Red.paint(damage.to_string()),
+                                Red.paint(player1_action.action_type.to_string()),
+                                Red.paint("damage")
+                            );
+                        } else {
+                            println!("Player Two has higher defend");
+                        }
+                    } else {
+                        self.player_two.hp -= player1_action.damage;
                         println!(
                             "{} {} {} {}",
                             Red.paint("Player One deals"),
-                            Red.paint(damage.to_string()),
+                            Red.paint(player1_action.damage.to_string()),
                             Red.paint(player1_action.action_type.to_string()),
                             Red.paint("damage")
                         );
-                    } else {
-                        println!("Player Two has higher defend");
                     }
-                } else {
-                    self.player_two.hp -= player1_action.damage;
-                    println!(
-                        "{} {} {} {}",
-                        Red.paint("Player One deals"),
-                        Red.paint(player1_action.damage.to_string()),
-                        Red.paint(player1_action.action_type.to_string()),
-                        Red.paint("damage")
-                    );
                 }
             }
             self.clear_rollover();
