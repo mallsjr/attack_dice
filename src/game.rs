@@ -93,20 +93,24 @@ impl Game {
             if player1_action.action == Action::Defend {
                 // "Player one is defending so will lose HP if player two attack is different or higher"
                 if player1_action.stalwart_defend && player2_action.critical_attack {
+                    println!("Player 1 Stalwart Defend, Player 2 Critical Attack");
                     if player2_action.damage > player1_action.damage {
                         self.player_one.hp -= player2_action.damage - player1_action.damage;
                     } else {
                         self.player_one.hp += player1_action.damage - player2_action.damage;
                     }
                 } else if player1_action.stalwart_defend && !player2_action.critical_attack {
+                    println!("Player 1 Stalwart Defend, Player 2 Normal Attack");
                     if player1_action.damage > player2_action.damage {
                         self.player_one.hp += player1_action.damage - player2_action.damage;
                     } else {
                         self.player_one.hp -= player2_action.damage - player1_action.damage;
                     }
                 } else if !player1_action.stalwart_defend && player2_action.critical_attack {
+                    println!("Player 1 Normal Defend, Player 2 Critical Attack");
                     self.player_one.hp -= player2_action.damage;
                 } else if !player1_action.stalwart_defend && !player2_action.critical_attack {
+                    println!("Player 1 Normal Defend, Player 2 Normal Attack");
                     if player1_action.action_type == ActionType::Magical
                         && player2_action.action_type == ActionType::Magical
                         || player1_action.action_type == ActionType::Physical
@@ -140,20 +144,24 @@ impl Game {
             } else {
                 //"Player two is defending so will lose HP if player one attack is different or higher"
                 if player2_action.stalwart_defend && player1_action.critical_attack {
+                    println!("Player 2 Stalwart Defend, Player 1 Critical Attack");
                     if player1_action.damage > player2_action.damage {
                         self.player_two.hp -= player1_action.damage - player2_action.damage;
                     } else {
                         self.player_two.hp += player2_action.damage - player1_action.damage;
                     }
                 } else if player2_action.stalwart_defend && !player1_action.critical_attack {
+                    println!("Player 2 Stalwart Defend, Player 1 Normal Attack");
                     if player2_action.damage > player1_action.damage {
                         self.player_two.hp += player2_action.damage - player1_action.damage;
                     } else {
                         self.player_two.hp -= player1_action.damage - player2_action.damage;
                     }
                 } else if !player2_action.stalwart_defend && player1_action.critical_attack {
+                    println!("Player 2 Normal Defend, Player 1 Critical Attack");
                     self.player_two.hp -= player1_action.damage;
                 } else if !player2_action.stalwart_defend && !player1_action.critical_attack {
+                    println!("Player 2 Normal Defend, Player 1 Normal Attack");
                     if player1_action.action_type == ActionType::Magical
                         && player2_action.action_type == ActionType::Magical
                         || player1_action.action_type == ActionType::Physical
